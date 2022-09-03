@@ -89,19 +89,54 @@ def depthFirstSearch(problem: SearchProblem):
     
     from game import Directions
     closed = set()
+    path = util.Stack()
     fringe = util.Stack()
     fringe.push((problem.getStartState(), Directions.STOP, 0))
+    path.push((problem.getStartState(), Directions.STOP, 0))
     while True:
         if fringe.isEmpty():
             return False
         node = fringe.pop()
+        addNodeToPath(node, path, problem)
         if problem.isGoalState(node[0]):
             print(fringe.list)
-            return node
-        if not node[0] in closed:
-            closed.add(node[0])
+            return convertPathToActions(path)
+        if not node in closed:
+            closed.add(node)
             for child in problem.getSuccessors(node[0]):
                 fringe.push(child)
+
+def addNodeToPath(successorNode, path, problem):
+    if path.isEmpty():
+        path.push(successorNode)
+        return
+    previousNode = path.pop()
+    if successorNode in problem.getSuccessors(previousNode[0]):
+        path.push(previousNode)
+        path.push(successorNode)
+    else:
+        addNodeToPath(successorNode, path, problem)
+
+def convertPathToActions(path):
+    actions = []
+    while not path.isEmpty():
+        actions.append(path.pop()[1])
+    actions.reverse()
+    return actions
+
+# def convertPathToActionsRevised(closed, problem):
+#     closedList = []
+#     path = []
+#     for i in closed:
+#         closedList.append(i)
+#     closedList.reverse()
+#     currNode = closedList[0] #currNode should be goal node
+#     closedList.pop(0)
+#     for i in closedList:
+#         if currNode in problem.getSuccessors(i[0]):
+#             path.append[currNode[1]]
+#             currNode = i
+#     return actions
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
