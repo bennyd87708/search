@@ -331,10 +331,7 @@ class CornersProblem(search.SearchProblem):
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
             if not hitsWall:
-                remainingCorners = list(state[1])
-                if state[0] in remainingCorners:
-                    remainingCorners.remove(state[0])
-                successors.append((((nextx, nexty), tuple(remainingCorners)), action, 1))
+                successors.append([((nextx, nexty), tuple(x for x in state[1] if x != state[0])), action, 1])
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
