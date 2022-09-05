@@ -99,7 +99,7 @@ def depthFirstSearch(problem: SearchProblem):
         if not node[0] in closed:
             closed.add(node[0])
             for child in problem.getSuccessors(node[0]):
-                fringe.push((child[0], node[1] + [child[1]], child[2]))
+                fringe.push((child[0], node[1] + [child[1]], node[2] + child[2]))
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
@@ -116,7 +116,7 @@ def breadthFirstSearch(problem: SearchProblem):
         if not node[0] in closed:
             closed.add(node[0])
             for child in problem.getSuccessors(node[0]):
-                fringe.push((child[0], node[1] + [child[1]], child[2]))
+                fringe.push((child[0], node[1] + [child[1]], node[2] + child[2]))
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
