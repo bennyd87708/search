@@ -402,6 +402,10 @@ class FoodSearchProblem:
         self.startingGameState = startingGameState
         self._expanded = 0 # DO NOT CHANGE
         self.heuristicInfo = {} # A dictionary for the heuristic to store information
+        self.startGameState = startingGameState #need this for maze
+        
+    def getStartGameState(self):
+        return self.startGameState
 
     def getStartState(self):
         return self.start
@@ -472,8 +476,32 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    foodList = foodGrid.asList()
+    if len(foodList) == 0:
+        return 0
+    farthestFood1 = foodList[0]
+    farthestFood2 = foodList[-1]
+    farthestDistance = mazeDistance(farthestFood1, farthestFood2, problem.getStartGameState())
+    for currFood1 in foodList:
+        for currFood2 in foodList:
+            if currFood1 != currFood2:
+                currDistance = mazeDistance(currFood1, currFood2, problem.getStartGameState())
+                if(currDistance > farthestDistance):
+                    farthestFood1, farthestFood2, farthestDistance = currFood1, currFood2, currDistance
+                    
+    dist1 = mazeDistance(position, farthestFood1, problem.getStartGameState())
+    dist2 = mazeDistance(position, farthestFood2, problem.getStartGameState())
+    dist = min(dist1, dist2)
+    """
+    print("============================")
+    print(farthestFood)
+    print(farthestDistance)
+    print(secondFarthestFood)
+    print(secondFarthestDistance)
+    print(mazeDistance(secondFarthestFood, farthestFood, problem.getStartGameState()))
+    print("============================")
+    """
+    return farthestDistance + dist
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
