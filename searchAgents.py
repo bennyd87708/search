@@ -291,7 +291,6 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        "*** YOUR CODE HERE ***"
         self.startState = (self.startingPosition, self.corners)
 
     def getStartState(self):
@@ -299,14 +298,12 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
         return self.startState
 
     def isGoalState(self, state: Any):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
         return len(state[1]) == 0
 
     def getSuccessors(self, state: Any):
@@ -329,14 +326,15 @@ class CornersProblem(search.SearchProblem):
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
 
-            "*** YOUR CODE HERE ***"
-            x, y = self.startingPosition
+            x, y = state[0]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
             if not hitsWall:
-                successors.append([((x, y), tuple(x for x in state[1] if (x, y) != x)), action, 1])
-
+                remainingCorners = list(state[1])
+                if state[0] in remainingCorners:
+                    remainingCorners.remove(state[0])
+                successors.append((((nextx, nexty), tuple(remainingCorners)), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -370,9 +368,14 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    
+    closestCorner = null
+    closestDistance = 999999999999999
+    for corner in problem.corners:
+        distance = ((state[0] - corner[0]) ** 2 + (state[1] - corner[1]) ** 2 ) ** 0.5
+        if(currDistance < distance):
+            closestCorner, closestDistance = corner, distance
+    return closestDistance
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -495,9 +498,8 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        
+        return search.bfs(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -532,8 +534,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         """
         x,y = state
 
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y]
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
     """
